@@ -1,0 +1,128 @@
+#include <benchmark/benchmark.h>
+#include <tl/expected.hpp>
+
+#include <cstdlib>
+#include <cstring>
+#include <memory>
+#include <system_error>
+
+extern tl::expected<int, std::error_code> conderror_exp(bool b);
+extern int conderror_exc(bool b);
+
+void BM_loop_exp_happy(benchmark::State& state) {
+    const unsigned int N = state.range(0);
+    std::unique_ptr<bool[]> a(new bool[N]);
+    std::memset(a.get(), false, N*sizeof(bool));
+    const bool* b = a.get();
+    for (auto _ : state) {
+        for (size_t i = 0; i<N; ++i)
+          benchmark::DoNotOptimize(conderror_exp(b[i]));
+    }
+    state.SetItemsProcessed(N*state.iterations());
+}
+
+void BM_loop_exc_happy(benchmark::State& state) {
+    const unsigned int N = state.range(0);
+    std::unique_ptr<bool[]> a(new bool[N]);
+    std::memset(a.get(), false, N*sizeof(bool));
+    const bool* b = a.get();
+    for (auto _ : state) {
+        for (size_t i = 0; i<N; ++i)
+          benchmark::DoNotOptimize(conderror_exc(b[i]));
+    }
+    state.SetItemsProcessed(N*state.iterations());
+}
+
+void BM_loop_exp_sad(benchmark::State& state) {
+    const unsigned int N = state.range(0);
+    std::unique_ptr<bool[]> a(new bool[N]);
+    std::memset(a.get(), false, N*sizeof(bool));
+    const bool* b = a.get();
+    int c = 0;
+
+    for (auto _ : state) {
+        for (size_t i = 0; i<N; ++i)
+        {
+          tl::expected<int, std::error_code> r;
+          benchmark::DoNotOptimize(r = conderror_exp(b[i]));
+          if( !r )
+            benchmark::DoNotOptimize(++c);
+        }
+    }
+    state.SetItemsProcessed(N*state.iterations());
+}
+
+void BM_loop_exc_sad(benchmark::State& state) {
+    const unsigned int N = state.range(0);
+    std::unique_ptr<bool[]> a(new bool[N]);
+    std::memset(a.get(), false, N*sizeof(bool));
+    const bool* b = a.get();
+    int c = 0;
+
+    for (auto _ : state) {
+        for (size_t i = 0; i<N; ++i)
+        {
+          try {
+            benchmark::DoNotOptimize(conderror_exc(b[i]));
+          } catch (const std::system_error &e) {
+            benchmark::DoNotOptimize(++c);
+          }
+        }
+    }
+    state.SetItemsProcessed(N*state.iterations());
+}
+
+void BM_loop_exp_mix(benchmark::State& state) {
+    const unsigned int N = state.range(0);
+    std::unique_ptr<bool[]> a(new bool[N]);
+    std::memset(a.get(), false, N*sizeof(bool));
+    for(size_t i = 0; i < N; ++i)
+      a.get()[i] = i%2;
+    const bool* b = a.get();
+    int c = 0;
+
+    for (auto _ : state) {
+        for (size_t i = 0; i<N; ++i)
+        {
+          tl::expected<int, std::error_code> r;
+          benchmark::DoNotOptimize(r = conderror_exp(b[i]));
+          if( !r )
+            benchmark::DoNotOptimize(++c);
+        }
+    }
+    state.SetItemsProcessed(N*state.iterations());
+}
+
+void BM_loop_exc_mix(benchmark::State& state) {
+    const unsigned int N = state.range(0);
+    std::unique_ptr<bool[]> a(new bool[N]);
+    std::memset(a.get(), false, N*sizeof(bool));
+    for(size_t i = 0; i < N; ++i)
+      a.get()[i] = i%2;
+    const bool* b = a.get();
+    int c = 0;
+
+    for (auto _ : state) {
+        for (size_t i = 0; i<N; ++i)
+        {
+          try {
+            benchmark::DoNotOptimize(conderror_exc(b[i]));
+          } catch (const std::system_error &e) {
+            benchmark::DoNotOptimize(++c);
+          }
+        }
+    }
+    state.SetItemsProcessed(N*state.iterations());
+}
+
+#define ARGS \
+    ->Arg(1<<20)
+
+BENCHMARK(BM_loop_exp_happy) ARGS;
+BENCHMARK(BM_loop_exc_happy) ARGS;
+BENCHMARK(BM_loop_exp_sad) ARGS;
+BENCHMARK(BM_loop_exc_sad) ARGS;
+BENCHMARK(BM_loop_exp_mix) ARGS;
+BENCHMARK(BM_loop_exc_mix) ARGS;
+
+BENCHMARK_MAIN();
