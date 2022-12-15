@@ -49,3 +49,9 @@ The `happy` benchmarks are measuring the speed of calling the function when it
 does not encounter failure. The `sad` benchmarks do the same, but for when
 failure is always encountered. The `mix` benchmarks measure function calls when
 there is an alternating error/no-error case.
+
+## Scripts
+
+There are several scripts in the [scripts directory](scripts) that can be used
+to run the benchmark multiple times, collate the output into a more useful
+form, and create graphs.
