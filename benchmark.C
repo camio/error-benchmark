@@ -9,7 +9,7 @@
 extern tl::expected<int, std::error_code> conderror_exp(bool b);
 extern int conderror_exc(bool b);
 
-void BM_loop_exp_happy(benchmark::State& state) {
+void BM_happy_exp(benchmark::State& state) {
     const unsigned int N = state.range(0);
     std::unique_ptr<bool[]> a(new bool[N]);
     std::memset(a.get(), false, N*sizeof(bool));
@@ -21,7 +21,7 @@ void BM_loop_exp_happy(benchmark::State& state) {
     state.SetItemsProcessed(N*state.iterations());
 }
 
-void BM_loop_exc_happy(benchmark::State& state) {
+void BM_happy_exc(benchmark::State& state) {
     const unsigned int N = state.range(0);
     std::unique_ptr<bool[]> a(new bool[N]);
     std::memset(a.get(), false, N*sizeof(bool));
@@ -33,7 +33,7 @@ void BM_loop_exc_happy(benchmark::State& state) {
     state.SetItemsProcessed(N*state.iterations());
 }
 
-void BM_loop_exp_sad(benchmark::State& state) {
+void BM_sad_exp(benchmark::State& state) {
     const unsigned int N = state.range(0);
     std::unique_ptr<bool[]> a(new bool[N]);
     std::memset(a.get(), false, N*sizeof(bool));
@@ -52,7 +52,7 @@ void BM_loop_exp_sad(benchmark::State& state) {
     state.SetItemsProcessed(N*state.iterations());
 }
 
-void BM_loop_exc_sad(benchmark::State& state) {
+void BM_sad_exc(benchmark::State& state) {
     const unsigned int N = state.range(0);
     std::unique_ptr<bool[]> a(new bool[N]);
     std::memset(a.get(), false, N*sizeof(bool));
@@ -72,7 +72,7 @@ void BM_loop_exc_sad(benchmark::State& state) {
     state.SetItemsProcessed(N*state.iterations());
 }
 
-void BM_loop_exp_mix(benchmark::State& state) {
+void BM_mix_exp(benchmark::State& state) {
     const unsigned int N = state.range(0);
     std::unique_ptr<bool[]> a(new bool[N]);
     std::memset(a.get(), false, N*sizeof(bool));
@@ -93,7 +93,7 @@ void BM_loop_exp_mix(benchmark::State& state) {
     state.SetItemsProcessed(N*state.iterations());
 }
 
-void BM_loop_exc_mix(benchmark::State& state) {
+void BM_mix_exc(benchmark::State& state) {
     const unsigned int N = state.range(0);
     std::unique_ptr<bool[]> a(new bool[N]);
     std::memset(a.get(), false, N*sizeof(bool));
@@ -118,11 +118,11 @@ void BM_loop_exc_mix(benchmark::State& state) {
 #define ARGS \
     ->Arg(1<<20)
 
-BENCHMARK(BM_loop_exp_happy) ARGS;
-BENCHMARK(BM_loop_exc_happy) ARGS;
-BENCHMARK(BM_loop_exp_sad) ARGS;
-BENCHMARK(BM_loop_exc_sad) ARGS;
-BENCHMARK(BM_loop_exp_mix) ARGS;
-BENCHMARK(BM_loop_exc_mix) ARGS;
+BENCHMARK(BM_happy_exp) ARGS;
+BENCHMARK(BM_happy_exc) ARGS;
+BENCHMARK(BM_sad_exp) ARGS;
+BENCHMARK(BM_sad_exc) ARGS;
+BENCHMARK(BM_mix_exp) ARGS;
+BENCHMARK(BM_mix_exc) ARGS;
 
 BENCHMARK_MAIN();

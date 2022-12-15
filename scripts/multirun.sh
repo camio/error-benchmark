@@ -16,9 +16,6 @@ repository where it can find an already built benchmark executable.
 The benchmark will run the given number of times (defaulting to 10) and create
 JSON files in the run/ directory with the name "<prefix>.run.<i>.json" where i
 is the ith run.
-
-Print commands for easier debugging and exit after our first failed
-command to avoid silent failures.
 EOF
 }
 
@@ -42,7 +39,7 @@ while [[ $# -gt 0 ]]; do
       RUNS="$2"
       shift ;;
     *)
-      echo "ERROR: unknown argumet: $1" >&2
+      echo "ERROR: unknown argument: $1" >&2
       exit 1;;
   esac
   shift
@@ -53,7 +50,7 @@ if [[ -z "${PREFIX}" ]]; then
   exit 1
 fi
 
-mkdir -p run
+mkdir --parents run
 
 for i in $(seq 1 $RUNS)
 do
