@@ -5,6 +5,10 @@ collate the output in a more useful form, and create graphs.
 
 All scripts have a `--help` flag that provides usage information.
 
+## `build_graph.sh`
+
+Utility script to generate a comparison graph from benchmark output.
+
 ## `collate.sh`
 
 Utility script to turn the bechmark output (from `multirun.sh`) into a readily
