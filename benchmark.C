@@ -6,8 +6,21 @@
 #include <memory>
 #include <system_error>
 
+extern int conderror_ret(bool b);
 extern tl::expected<int, std::error_code> conderror_exp(bool b);
 extern int conderror_exc(bool b);
+
+void BM_happy_ret(benchmark::State& state) {
+    const unsigned int N = state.range(0);
+    std::unique_ptr<bool[]> a(new bool[N]);
+    std::memset(a.get(), false, N*sizeof(bool));
+    const bool* b = a.get();
+    for (auto _ : state) {
+        for (size_t i = 0; i<N; ++i)
+          benchmark::DoNotOptimize(conderror_ret(b[i]));
+    }
+    state.SetItemsProcessed(N*state.iterations());
+}
 
 void BM_happy_exp(benchmark::State& state) {
     const unsigned int N = state.range(0);
@@ -29,6 +42,25 @@ void BM_happy_exc(benchmark::State& state) {
     for (auto _ : state) {
         for (size_t i = 0; i<N; ++i)
           benchmark::DoNotOptimize(conderror_exc(b[i]));
+    }
+    state.SetItemsProcessed(N*state.iterations());
+}
+
+void BM_sad_ret(benchmark::State& state) {
+    const unsigned int N = state.range(0);
+    std::unique_ptr<bool[]> a(new bool[N]);
+    std::memset(a.get(), false, N*sizeof(bool));
+    const bool* b = a.get();
+    int c = 0;
+
+    for (auto _ : state) {
+        for (size_t i = 0; i<N; ++i)
+        {
+          int r;
+          benchmark::DoNotOptimize(r = conderror_ret(b[i]));
+          if( r == -1 )
+            benchmark::DoNotOptimize(++c);
+        }
     }
     state.SetItemsProcessed(N*state.iterations());
 }
@@ -72,6 +104,26 @@ void BM_sad_exc(benchmark::State& state) {
     state.SetItemsProcessed(N*state.iterations());
 }
 
+void BM_mix_ret(benchmark::State& state) {
+    const unsigned int N = state.range(0);
+    std::unique_ptr<bool[]> a(new bool[N]);
+    std::memset(a.get(), false, N*sizeof(bool));
+    for(size_t i = 0; i < N; ++i)
+      a.get()[i] = i%2;
+    const bool* b = a.get();
+    int c = 0;
+
+    for (auto _ : state) {
+        for (size_t i = 0; i<N; ++i)
+        {
+          int r;
+          benchmark::DoNotOptimize(r = conderror_ret(b[i]));
+          if( r == -1 )
+            benchmark::DoNotOptimize(++c);
+        }
+    }
+    state.SetItemsProcessed(N*state.iterations());
+}
 void BM_mix_exp(benchmark::State& state) {
     const unsigned int N = state.range(0);
     std::unique_ptr<bool[]> a(new bool[N]);
@@ -118,10 +170,13 @@ void BM_mix_exc(benchmark::State& state) {
 #define ARGS \
     ->Arg(1<<20)
 
+BENCHMARK(BM_happy_ret) ARGS;
 BENCHMARK(BM_happy_exp) ARGS;
 BENCHMARK(BM_happy_exc) ARGS;
+BENCHMARK(BM_sad_ret) ARGS;
 BENCHMARK(BM_sad_exp) ARGS;
 BENCHMARK(BM_sad_exc) ARGS;
+BENCHMARK(BM_mix_ret) ARGS;
 BENCHMARK(BM_mix_exp) ARGS;
 BENCHMARK(BM_mix_exc) ARGS;
 

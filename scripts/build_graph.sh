@@ -46,7 +46,7 @@ if [[ -z "${PREFIX}" ]]; then
   exit 1
 fi
 
-for ALTERNATIVE in exc exp
+for ALTERNATIVE in ret exc exp
 do
   scripts/collate.sh --prefix ${PREFIX} | \
     jq --raw-output '
@@ -80,6 +80,7 @@ unset border
 set grid ytics lc rgb "#C0C0C0"
 
 set style data histograms
-plot "/tmp/exc.csv" using 2:xticlabels(1) title "Exceptions" lt rgb "#406090",\
+plot "/tmp/ret.csv" using 2:xticlabels(1) title "Return code" lt rgb "#909090",\
+     "/tmp/exc.csv" using 2 title "Exceptions" lt rgb "#406090",\
      "/tmp/exp.csv" using 2 title "Expected" lt rgb "#40FF00"
 EOF
