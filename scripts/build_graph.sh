@@ -65,7 +65,7 @@ done
 gnuplot -p <<EOF
 set datafile separator ','
 set boxwidth 0.8
-set style fill solid 1.00
+set style fill solid 1.0 border -1
 
 set title "${PREFIX}" font ",14" tc rgb "#606060"
 set ylabel "Iterations per second"
@@ -79,8 +79,10 @@ unset border
 # Lighter grid lines
 set grid ytics lc rgb "#C0C0C0"
 
-set style data histograms
-plot "/tmp/ret.csv" using 2:xticlabels(1) title "Return code" lt rgb "#909090",\
-     "/tmp/exc.csv" using 2 title "Exceptions" lt rgb "#406090",\
-     "/tmp/exp.csv" using 2 title "Expected" lt rgb "#40FF00"
+set style histogram errorbars gap 2 lw 1
+set style data histogram
+set bars 2.0
+plot "/tmp/ret.csv" using 2:3:xticlabels(1) title "Return code" lt rgb "#909090",\
+     "/tmp/exc.csv" using 2:3 title "Exceptions" lt rgb "#406090",\
+     "/tmp/exp.csv" using 2:3 title "Expected" lt rgb "#40FF00"
 EOF
