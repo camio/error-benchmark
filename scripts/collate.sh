@@ -44,15 +44,24 @@ fi
 
 jq --slurp '[.[].benchmarks[]]
   | group_by(.name)
-  | [ .[] | { test_name:   .[0].name | sub("BM_(?<test>.*)_.../.*";.test)
+  | [ .[] | [.[].items_per_second]             as $frequencySamples
+          | ($frequencySamples | add / length) as $frequencyMean
+          | ($frequencySamples | map(1/.))     as $periodSamples
+          | ($periodSamples | add / length)    as $periodMean
+          | { test_name:   .[0].name | sub("BM_(?<test>.*)_.../.*";.test)
             , alternative: .[0].name | sub("BM_.*_(?<alt>...)/.*";.alt)
-            , samples:     [.[].items_per_second]
-            , mean:        ([.[].items_per_second] | add / length)
-            , stddev:      ( [.[].items_per_second]
-                           | (add / length) as $mean
-                           | (map(. - $mean | . * .) | add) / (length - 1)
-                           | sqrt
-                           )
+            , $frequencySamples
+            , $frequencyMean
+            , frequencyStddev:  ( $frequencySamples
+                                | (map(. - $frequencyMean | . * .) | add) / (length - 1)
+                                | sqrt
+                                )
+            , $periodSamples
+            , $periodMean
+            , periodStddev:  ( $periodSamples
+                             | (map(. - $periodMean | . * .) | add) / (length - 1)
+                             | sqrt
+                             )
             }
     ]
   | group_by(.test_name)

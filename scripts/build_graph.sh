@@ -55,8 +55,8 @@ do
     | .results[]
     | select(.alternative | contains("'"${ALTERNATIVE}"'"))
     | [ $test_name,
-        .mean,
-        .stddev
+        .periodMean,
+        .periodStddev
       ]
     | @csv
     ' > /tmp/${ALTERNATIVE}.csv
@@ -68,7 +68,8 @@ set boxwidth 0.8
 set style fill solid 1.0 border -1
 
 set title "${PREFIX}" font ",14" tc rgb "#606060"
-set ylabel "Iterations per second"
+set ylabel "Nanoseconds per call"
+set yrange [0:10e-9]
 set xlabel "Test case"
 set xtics nomirror rotate by -45
 set format y '%.0s %c'
