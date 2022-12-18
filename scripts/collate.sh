@@ -57,12 +57,7 @@ jq --slurp '[.[].benchmarks[]]
     ]
   | group_by(.test_name)
   | [ .[] | { test_name: .[0].test_name,
-              results: [.[] | { alternative: .alternative
-                              , mean: .mean
-                              , stddev: .stddev
-                              , samples: .samples
-                              }
-                       ]
+              results: [.[] | del (.test_name)]
             }
     ]
   ' run/${PREFIX}.run.*.json
