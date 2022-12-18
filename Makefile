@@ -13,5 +13,5 @@ all: benchmark
 clean:
 	$(RM) benchmark *.o
 
-benchmark: benchmark.o conderror_exp.o conderror_exc.o
+benchmark: benchmark.o conderror_exp.o conderror_exc.o conderror_ret.o
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ `pkg-config --libs --static benchmark`
