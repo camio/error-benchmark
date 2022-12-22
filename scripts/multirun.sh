@@ -50,7 +50,7 @@ if [[ -z "${PREFIX}" ]]; then
   exit 1
 fi
 
-mkdir --parents run
+mkdir -p run
 
 for i in $(seq 1 $RUNS)
 do
