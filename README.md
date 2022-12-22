@@ -3,6 +3,15 @@
 This repository contains the source code for a micro benchmark of both
 std::expected and standard exceptions.
 
+## Getting the code
+
+Check out the code in the normal way. Once done, use the following command to
+pull in necessary submodules.
+
+```bsh
+git submodule update --init
+```
+
 ## Building
 
 Use the enclosed `Makefile`. A system installation of [Google
