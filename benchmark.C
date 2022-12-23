@@ -108,7 +108,7 @@ void BM_mix_ret(benchmark::State& state) {
     const unsigned int N = state.range(0);
     std::unique_ptr<bool[]> a(new bool[N]);
     for(size_t i = 0; i < N; ++i)
-      a.get()[i] = i%2;
+      a.get()[i] = i%state.range(1) == 0;
     const bool* b = a.get();
     int c = 0;
 
@@ -127,7 +127,7 @@ void BM_mix_exp(benchmark::State& state) {
     const unsigned int N = state.range(0);
     std::unique_ptr<bool[]> a(new bool[N]);
     for(size_t i = 0; i < N; ++i)
-      a.get()[i] = i%2;
+      a.get()[i] = i%state.range(1) == 0;
     const bool* b = a.get();
     int c = 0;
 
@@ -147,7 +147,7 @@ void BM_mix_exc(benchmark::State& state) {
     const unsigned int N = state.range(0);
     std::unique_ptr<bool[]> a(new bool[N]);
     for(size_t i = 0; i < N; ++i)
-      a.get()[i] = i%2;
+      a.get()[i] = i%state.range(1) == 0;
     const bool* b = a.get();
     int c = 0;
 
@@ -165,16 +165,22 @@ void BM_mix_exc(benchmark::State& state) {
 }
 
 #define ARGS \
-    ->Arg(1<<20)
+    ->Arg( long(1e6) )
+
+#define MIX_ARGS \
+    ->Args( {long(1e6), long(1e4)} ) \
+    ->Args( {long(1e6), long(1e3)} ) \
+    ->Args( {long(1e6), long(1e2)} ) \
+    ->Args( {long(1e6), long(1e1)} )
 
 BENCHMARK(BM_happy_ret) ARGS;
 BENCHMARK(BM_happy_exp) ARGS;
 BENCHMARK(BM_happy_exc) ARGS;
+BENCHMARK(BM_mix_ret) MIX_ARGS;
+BENCHMARK(BM_mix_exp) MIX_ARGS;
+BENCHMARK(BM_mix_exc) MIX_ARGS;
 BENCHMARK(BM_sad_ret) ARGS;
 BENCHMARK(BM_sad_exp) ARGS;
 BENCHMARK(BM_sad_exc) ARGS;
-BENCHMARK(BM_mix_ret) ARGS;
-BENCHMARK(BM_mix_exp) ARGS;
-BENCHMARK(BM_mix_exc) ARGS;
 
 BENCHMARK_MAIN();

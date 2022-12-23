@@ -50,8 +50,31 @@ for ALTERNATIVE in ret exc exp
 do
   scripts/collate.sh --prefix ${PREFIX} | \
     jq --raw-output '
-    .[]
+    # Put test entries in the desired order
+      [ .[]
+      | { key: (.test_name | if   startswith("sad") then 0
+                             elif startswith("mix") then 1
+                                                    else 2
+                             end
+                )
+        , object: .
+        }
+      ]
+    | sort_by(.key)
+    | map(.object)
+
+    # Create CSV
+    | .[]
     | .test_name as $test_name
+    | (.test_name |
+        if   startswith("sad/")                        then "0% success"
+        elif startswith("happy/")                      then "100% success"
+        elif startswith("mix/") and endswith("/10")    then "90% success"
+        elif startswith("mix/") and endswith("/100")   then "99% success"
+        elif startswith("mix/") and endswith("/1000")  then "99.9% success"
+        elif startswith("mix/") and endswith("/10000") then "99.99% success"
+        else . end
+      ) as $test_name
     | .results[]
     | select(.alternative | contains("'"${ALTERNATIVE}"'"))
     | [ $test_name,
@@ -69,7 +92,7 @@ set style fill solid 1.0 border -1
 
 set title "${PREFIX}" font ",14" tc rgb "#606060"
 set ylabel "Nanoseconds per call"
-set yrange [0:10e-9]
+# set yrange [0:35e-9]
 set xlabel "Test case"
 set xtics nomirror rotate by -45
 set format y '%.0s %c'

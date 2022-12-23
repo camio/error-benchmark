@@ -48,7 +48,7 @@ jq --slurp '[.[].benchmarks[]]
           | ($frequencySamples | add / length) as $frequencyMean
           | ($frequencySamples | map(1/.))     as $periodSamples
           | ($periodSamples | add / length)    as $periodMean
-          | { test_name:   .[0].name | sub("BM_(?<test>.*)_.../.*";.test)
+          | { test_name:   .[0].name | sub("BM_(?<test>.*)_...(?<path>/.*)";.test + .path)
             , alternative: .[0].name | sub("BM_.*_(?<alt>...)/.*";.alt)
             , $frequencySamples
             , $frequencyMean
