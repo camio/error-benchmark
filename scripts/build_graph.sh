@@ -17,12 +17,12 @@ EOF
 }
 
 if ! command -v jq >/dev/null; then
-  echo "ERROR: jq executable could not be found. Is it installed" >&2
+  echo "ERROR: jq executable could not be found. Is it installed?" >&2
   exit 1
 fi
 
 if ! command -v gnuplot >/dev/null; then
-  echo "ERROR: gnuplot executable could not be found. Is it installed" >&2
+  echo "ERROR: gnuplot executable could not be found. Is it installed?" >&2
   exit 1
 fi
 
