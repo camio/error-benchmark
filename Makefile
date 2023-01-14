@@ -6,7 +6,7 @@ CPPFLAGS:= -Iexpected/include `pkg-config --cflags benchmark`
 
 all: benchmark
 
-%.o %.S: %.C
+%.o %.o.S: %.C
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $^ -o $@
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -S $^ -o $@.S
 
