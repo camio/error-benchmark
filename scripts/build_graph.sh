@@ -92,7 +92,7 @@ set style fill solid 1.0 border -1
 
 set title "${PREFIX}" font ",14" tc rgb "#606060"
 set ylabel "Nanoseconds per call"
-# set yrange [0:35e-9]
+set yrange [0:10e-9]
 set xlabel "Test case"
 set xtics nomirror rotate by -45
 set format y '%.0s %c'

@@ -2,7 +2,7 @@
 
 CXX:= g++
 CXXFLAGS:= -O3
-CPPFLAGS:= -Iexpected/include `pkg-config --cflags benchmark`
+CPPFLAGS:= -I. -Iexpected/include `pkg-config --cflags benchmark`
 
 all: benchmark
 
@@ -13,5 +13,5 @@ all: benchmark
 clean:
 	$(RM) benchmark *.o
 
-benchmark: benchmark.o conderror_exp.o conderror_exc.o conderror_ret.o
+benchmark: benchmark.o conderror_exp.o conderror_exc.o conderror_ret.o conderror_cho.o
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ `pkg-config --libs --static benchmark`
